@@ -23,7 +23,7 @@ def show_actual_field(field):
         print(f'{idx} |{"|".join(seq)}|')
 
 def new_game(field_size=3):
-    game_field = [["x" for j in range(field_size)] for i in range(field_size)]
+    game_field = [["-" for j in range(field_size)] for i in range(field_size)]
     players_postions = {'Игрок 1': [], 'Игрок 2': []}
     show_actual_field(game_field)
 
