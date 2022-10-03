@@ -54,11 +54,13 @@ def player_move(player_id, positions, field):
         return False, positions, field
     input_move = int(input_move)
     positions_list = [i for j in list(positions.values()) for i in j]
-    if input_move > get_field_size_max_move(len(field)) or input_move in positions_list:
+    input_move_row = input_move // 10
+    input_move_col = input_move % 10
+    if (input_move_row > len(field) - 1 or input_move_col > len(field) - 1) or input_move in positions_list:
         print('!!! Неправильный ход, повторите ввод раз')
         return False, positions, field
     positions[player_id].append(input_move)
-    field[input_move // 10][input_move % 10] = 'x' if player_id == 1 else 'o'
+    field[input_move_row][input_move_col] = 'x' if player_id == 1 else 'o'
     return True, positions, field
 
 
