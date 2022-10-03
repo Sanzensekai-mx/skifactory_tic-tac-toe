@@ -13,19 +13,11 @@ BANNER = """
 VALID_ANSWER = {"ДА": ['да', 'y', 'yes', 'д'],
                 "НЕТ": ['нет', 'n', 'no', 'н']}
 
-# game_field = []
-
-# players_postions = {}
-
 
 def get_field_size_max_move(field_size):
     return int(str(field_size - 1) + str(field_size - 1))
 
 
-#    0 1 2
-# 0 |-|-|-|
-# 1 |-|-|-|
-# 2 |-|-|-|
 def show_actual_field(field):
     print(f"   {' '.join([str(i) for i in range(len(field))])}")
     for idx, seq in enumerate(field):
@@ -38,7 +30,7 @@ def check_tied(field):
 
 def check_winner(field): # rows = field
     rows = field
-    columns = [list(row) for row in zip(*rows)] # Транспорирование матрицы 
+    columns = [list(reversed(row)) for row in zip(*rows)] # Транспорирование матрицы 
     first_diag = [row[i] for i, row in enumerate(rows)]
     second_diag = [col[j] for j, col in enumerate(columns)]
     result_combos =[list(set(i)) for i in [*rows, *columns, first_diag, second_diag]]
@@ -79,11 +71,13 @@ def move_queue_gen():
 def new_game(field_size=3):
     game_field = [["-" for j in range(field_size)] for i in range(field_size)]
     players_postions_by_id = {1: [], 2: []}
-    # show_actual_field(game_field)
     move_queue = iter(move_queue_gen()) # очередность ходов 1,2,1...
     who_move = next(move_queue)
+    move_counter = 0
     while True:
         show_actual_field(game_field)
+        if move_counter >= 9:
+            return None
         is_correct_move, players_postions_by_id, game_field = player_move(who_move, players_postions_by_id, game_field)
         winner = check_winner(game_field)
         if winner:
@@ -91,6 +85,7 @@ def new_game(field_size=3):
             return winner
         if is_correct_move:
             who_move = next(move_queue)
+            move_counter += 1
             continue
         else:
             continue
@@ -99,7 +94,6 @@ def new_game(field_size=3):
 if __name__ == "__main__":
     print(BANNER)
     player_sym = {'x': 'Игрок 1 (X)', 'o': 'Игрок 2 (O)'}
-    # all_answers = [answer for group in list(VALID_ANSWER.values()) for answer in group]
     while True:
         yesno = input("Начать игру? (y/n) -> ").lower()
         if yesno in VALID_ANSWER['ДА']:
@@ -107,14 +101,9 @@ if __name__ == "__main__":
             print('Игрок 1 - X\nИгрок 2 - O')
             game_result = new_game(field_size=3)
             if game_result:
-                print(f'Победил {game_result}!!!')
-            # Обработка ничьи
-            new_game = input('Новая игра? (y/n) -> ').lower()
-            if new_game in VALID_ANSWER['ДА']:
-                continue
-            elif new_game in VALID_ANSWER['НЕТ']:
-                print('Выход...')
-                sys.exit(0)
+                print(f'Победил {player_sym[game_result]}!!!')
+            elif not game_result:
+                print(f'Ничья!!!')
         elif yesno in VALID_ANSWER['НЕТ']:
             print('Выход...')
             sys.exit(0)
